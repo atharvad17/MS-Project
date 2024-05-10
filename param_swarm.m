@@ -7,10 +7,6 @@ p_swarm.is_active_arena = false;
 p_swarm.is_active_spheres = false;
 p_swarm.is_active_cyl = true;
 
-% Elaine - add paths
-currentFolder = pwd;
-root_f = fullfile(currentFolder,'../../');
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Number of agents
 %
@@ -87,8 +83,6 @@ if (exist('map','var') && ACTIVE_ENVIRONMENT)
         map.buildings_north'; % x_obstacle
         map.buildings_east'; % y_obstacle
         repmat(cylinder_radius, 1, nb_obstacles)]; % r_obstacle
-    obs_loc_csv = [root_f 'obstacle_loc.csv'];
-    writematrix(p_swarm.cylinders, obs_loc_csv);
     p_swarm.n_cyl = length(p_swarm.cylinders(1, :));
 else
     p_swarm.cylinders = 0;
@@ -135,24 +129,12 @@ p_swarm.P = 20; % [m] cube edge size
 p_swarm.V0 = [0,0,0]'; % [m/s]
 p_swarm.V = 0; % [m/s]
 
-% % Seed to avoid random effects
-% p_swarm.seed = 5;
-% rng(p_swarm.seed);
+% Seed to avoid random effects
+p_swarm.seed = 5;
+rng(p_swarm.seed);
 
-% Elaine
-myStream = RandStream('mt19937ar','Seed', p_swarm.seed);
-p_swarm.Pos0 = p_swarm.P0 + p_swarm.P * rand(myStream,3,p_swarm.nb_agents);
-p_swarm.Vel0 = p_swarm.V0 + p_swarm.V * rand(myStream,3,p_swarm.nb_agents);
-
-% Elaine - set the z axis to the same
-p_swarm.Pos0 = [p_swarm.Pos0(1:2, :); -38*ones(1, p_swarm.nb_agents)];
-seed = num2str(p_swarm.seed);
-
-
-currentFolder = pwd;
-root_f = fullfile(currentFolder,'../../');
-loc_csv = [root_f 'fuzz/tmp/starting_loc.csv'];   
-
+p_swarm.Pos0 = p_swarm.P0 + p_swarm.P * rand(3,p_swarm.nb_agents);
+p_swarm.Vel0 = p_swarm.V0 + p_swarm.V * rand(3,p_swarm.nb_agents);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

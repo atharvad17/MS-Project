@@ -1,8 +1,8 @@
 function swarmfuzz(seedStart, seedEnd, dev, nb)
 
     c_obs = [50;150]; % hard code the location of the obstacle
-    max_ite = 15; % Maximum number of iterations
-    dur_t = 0.5; % Start value
+    max_ite = 10; % Maximum number of iterations
+    dur_t = 0.1; % Start value
 
     % -------- 0. Add paths
     currentFolder = pwd;
@@ -53,7 +53,7 @@ function swarmfuzz(seedStart, seedEnd, dev, nb)
 
         %%      -------- 1. Preparation ---------
         disp(["********** No attack. Running seed:" num2str(seed) "**********"]);
-        example_vasarhelyi(0, 0, 0, 0, 0, seed, pos_csv, dist_csv, col_csv, info_csv); % (start_t, dur, att_id, vic_id, dev_y, sed)
+        example_reynolds(0, 0, 0, 0, 0, seed, pos_csv, dist_csv, col_csv, info_csv); % (start_t, dur, att_id, vic_id, dev_y, sed)
         [start_t, pos_att, dist_obs, final_dire] = prepare(nb, c_obs, pos_csv, dist_csv, dire_csv, col_csv, seed); % ( pos_csv, nb, c_obs, dist_csv, dire_csv)
     
         %%  ---------2. Generate seedpool ---------
