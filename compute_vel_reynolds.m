@@ -339,32 +339,23 @@ function [v_fricmax] = get_v_max(v_fric, r, a, p)
 end
 
 
-function cohesion_command = compute_cohesion(swarm, p_swarm)
+function cohesion_command = compute_cohesion(swarm, p_swarm, cohesion_radius, k_cohesion)
     % Compute cohesion between drones
     nb_agents = swarm.nb_agents;
     pos = swarm.get_pos_ned();
     cohesion_command = zeros(3, nb_agents);
     
-    % Adjust parameters as needed
-    cohesion_radius = 5; % Adjust cohesion radius as needed
+    % Normalize cohesion radius and force coefficient
+    cohesion_radius = normalize_value(cohesion_radius, 1, 10); % Example normalization
+    k_cohesion = normalize_value(k_cohesion, 0, 1); % Example normalization
     
     for i = 1:nb_agents
-        % Compute cohesion for each agent
         for j = 1:nb_agents
             if i ~= j
-                % Compute relative position
                 rel_pos = pos(:, j) - pos(:, i);
-                
-                % Compute distance between agents
                 dist_ij = norm(rel_pos);
-                
-                % Check if the agent is within the cohesion radius
                 if dist_ij < cohesion_radius
-                    % Compute cohesion force
-                    k_cohesion = 0.1; % Adjust cohesion force coefficient as needed
                     cohesion_force = k_cohesion * rel_pos;
-                    
-                    % Accumulate cohesion force
                     cohesion_command(:, i) = cohesion_command(:, i) + cohesion_force;
                 end
             end
@@ -372,32 +363,23 @@ function cohesion_command = compute_cohesion(swarm, p_swarm)
     end
 end
 
-function separation_command = compute_separation(swarm, p_swarm, r_agent)
+function separation_command = compute_separation(swarm, p_swarm, r_agent, separation_radius, k_separation)
     % Compute separation between drones
     nb_agents = swarm.nb_agents;
     pos = swarm.get_pos_ned();
     separation_command = zeros(3, nb_agents);
     
-    % Adjust parameters as needed
-    separation_radius = 2 * r_agent; % Adjust separation radius as needed
+    % Normalize separation radius and force coefficient
+    separation_radius = normalize_value(separation_radius, 1, 10); % Example normalization
+    k_separation = normalize_value(k_separation, 0, 1); % Example normalization
     
     for i = 1:nb_agents
-        % Compute separation for each agent
         for j = 1:nb_agents
             if i ~= j
-                % Compute relative position
                 rel_pos = pos(:, j) - pos(:, i);
-                
-                % Compute distance between agents
                 dist_ij = norm(rel_pos);
-                
-                % Check if the agent is within the separation radius
                 if dist_ij < separation_radius
-                    % Compute separation force
-                    k_separation = 0.5; % Adjust separation force coefficient as needed
                     separation_force = k_separation * (1 / dist_ij - 1 / separation_radius) * rel_pos;
-                    
-                    % Accumulate separation force
                     separation_command(:, i) = separation_command(:, i) + separation_force;
                 end
             end
@@ -405,35 +387,31 @@ function separation_command = compute_separation(swarm, p_swarm, r_agent)
     end
 end
 
-function alignment_command = compute_alignment(swarm, p_swarm, r_agent)
+function alignment_command = compute_alignment(swarm, p_swarm, r_agent, alignment_radius, k_alignment)
     % Compute alignment between drones
     nb_agents = swarm.nb_agents;
     vel = swarm.get_vel_ned();
     alignment_command = zeros(3, nb_agents);
     
-    % Adjust parameters as needed
-    alignment_radius = 5 * r_agent; % Adjust alignment radius as needed
+    % Normalize alignment radius and force coefficient
+    alignment_radius = normalize_value(alignment_radius, 1, 10); % Example normalization
+    k_alignment = normalize_value(k_alignment, 0, 1); % Example normalization
     
     for i = 1:nb_agents
-        % Compute alignment for each agent
         for j = 1:nb_agents
             if i ~= j
-                % Compute relative velocity
                 rel_vel = vel(:, j) - vel(:, i);
-                
-                % Compute distance between agents
                 dist_ij = norm(rel_vel);
-                
-                % Check if the agent is within the alignment radius
                 if dist_ij < alignment_radius
-                    % Compute alignment force
-                    k_alignment = 0.1; % Adjust alignment force coefficient as needed
                     alignment_force = k_alignment * rel_vel;
-                    
-                    % Accumulate alignment force
                     alignment_command(:, i) = alignment_command(:, i) + alignment_force;
                 end
             end
         end
     end
+end
+
+function norm_val = normalize_value(val, min_val, max_val)
+    % Normalize a value to be between 0 and 1
+    norm_val = (val - min_val) / (max_val - min_val);
 end
